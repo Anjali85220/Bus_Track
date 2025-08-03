@@ -93,71 +93,25 @@ lib/
 - [ ] Firebase backend integration
 
 ---
-## 📷 Screenshots
+## 📸 App Screenshots
 
-**1. Splash Screen**  
-![Splash](screenshots/splash_screen.png)
+<div align="center">
+  <img src="screenshots/splash_screen.png" width="250" alt="Splash Screen"/>
+  <img src="screenshots/home_page.png" width="250" alt="Home Page"/>
+  <img src="screenshots/signup_role.png" width="250" alt="Signup Role Page"/>
+</div>
 
----
+<div align="center">
+  <img src="screenshots/signup_faculty.png" width="250" alt="Signup Faculty Page"/>
+  <img src="screenshots/signup_driver.png" width="250" alt="Signup Driver Page"/>
+  <img src="screenshots/login_role.png" width="250" alt="Login Role Page"/>
+</div>
 
-**2. Home Page**  
-![Home](screenshots/home_page.png)
-
----
-
-**3. Signup Role Selection**  
-![Signup Role](screenshots/signup_role.png)
-
----
-
-**4. Signup - Student**  
-![Signup Student](screenshots/signup_student.png)
-
----
-
-**5. Signup - Faculty**  
-![Signup Faculty](screenshots/signup_faculty.png)
-
----
-
-**6. Signup - Driver**  
-![Signup Driver](screenshots/signup_driver.png)
-
----
-
-**7. Login Role Selection**  
-![Login Role](screenshots/login_role.png)
-
----
-
-**8. Login - Student**  
-![Login Student](screenshots/login_student.png)
-
----
-
-**9. Login - Faculty**  
-![Login Faculty](screenshots/login_faculty.png)
-
----
-
-**10. Login - Driver**  
-![Login Driver](screenshots/login_driver.png)
-
----
-
-**11. Student Dashboard**  
-![Dashboard Student](screenshots/student_dashboard.png)
-
----
-
-**12. Faculty Dashboard**  
-![Dashboard Faculty](screenshots/faculty_dashboard.png)
-
----
-
-**13. Driver Dashboard**  
-![Dashboard Driver](screenshots/driver_dashboard.png)
-
+<div align="center">
+  <img src="screenshots/login_faculty.png" width="250" alt="Login Faculty Page"/>
+  <img src="screenshots/login_driver.png" width="250" alt="Login Driver Page"/>
+  <img src="screenshots/faculty_dashboard.png" width="250" alt="Faculty Dashboard"/>
+</div>
 
 ## 🚀 Tech Stack
 
