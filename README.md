@@ -110,7 +110,7 @@ lib/
 <div align="center">
   <img src="screenshots/login_faculty.png" width="250" alt="Login Faculty Page"/>
   <img src="screenshots/login_driver.png" width="250" alt="Login Driver Page"/>
-  <img src="screenshots/faculty_dashboard.png" width="250" alt="Faculty Dashboard"/>
+  <img src="screenshots/student_dashboard.png" width="250" alt="Student Dashboard"/>
 </div>
 
 ## 🚀 Tech Stack
