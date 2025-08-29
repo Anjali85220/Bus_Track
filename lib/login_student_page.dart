@@ -1,80 +1,97 @@
 import 'package:flutter/material.dart';
+import 'firebase_auth_service.dart';
+import 'dashboard_student.dart';
+// import 'faculty_dashboard.dart';
+// import 'driver_dashboard.dart';
 
 class LoginStudentPage extends StatefulWidget {
-  const LoginStudentPage({super.key});
+  const LoginStudentPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginStudentPage> createState() => _LoginStudentPageState();
+  _LoginStudentPageState createState() => _LoginStudentPageState();
 }
 
 class _LoginStudentPageState extends State<LoginStudentPage> {
-  final _formKey = GlobalKey<FormState>();
-  String email = '';
-  String password = '';
+  final FirebaseAuthService _authService = FirebaseAuthService();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      // Navigate to student dashboard
-      Navigator.pushNamed(context, '/dashboard-student');
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final result = await _authService.loginWithEmail(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (result != null) {
+      final role = result['role'];
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login successful! Role: $role')),
+      );
+
+      // 👉 Navigate directly instead of using route names
+      if (role == 'student') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const StudentDashboard()),
+        );
+      } 
+      // else if (role == 'faculty') {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (_) => const FacultyDashboardPage()),
+      //   );
+      // } 
+      // else if (role == 'driver') {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (_) => const DriverDashboardPage()),
+      //   );
+      // }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login failed. Please try again.')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE0F7FA),
-      appBar: AppBar(
-        title: const Text('Student Login'),
-        backgroundColor: Colors.teal,
-      ),
-      body: Center(
-        child: Card(
-          elevation: 12,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          margin: const EdgeInsets.all(24),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Student Email (@hitam.org)',
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    validator: (value) {
-                      if (value == null || !value.endsWith('@hitam.org')) {
-                        return 'Enter a valid @hitam.org email';
-                      }
-                      return null;
-                    },
-                    onChanged: (val) => email = val,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                    ),
-                    validator: (value) => value!.isEmpty ? 'Enter password' : null,
-                    onChanged: (val) => password = val,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                    ),
-                    child: const Text('Login'),
-                  )
-                ],
-              ),
+      appBar: AppBar(title: const Text("Student Login")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: "Email"),
             ),
-          ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: "Password"),
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: _login,
+                    child: const Text("Login"),
+                  ),
+          ],
         ),
       ),
     );

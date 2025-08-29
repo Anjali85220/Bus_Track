@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:TrackMyBus/firebase_auth_service.dart';
+import 'package:TrackMyBus/dashboard_faculty.dart';
 
 class SignupFacultyPage extends StatefulWidget {
   const SignupFacultyPage({super.key});
@@ -12,20 +15,49 @@ class _SignupFacultyPageState extends State<SignupFacultyPage> {
   String name = '';
   String email = '';
   String password = '';
+  bool _isLoading = false;
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      if (!email.endsWith('@hitam.org')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Use HITAM email only')),
-        );
-        return;
+  final FirebaseAuthService _authService = FirebaseAuthService();
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (!email.endsWith('@hitam.org')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Use HITAM email only')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    String? result = await _authService.signUpWithEmail(
+      email: email.trim(),
+      password: password.trim(),
+      role: 'faculty',
+    );
+
+    setState(() => _isLoading = false);
+
+    if (result == null) {
+      final user = _authService.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'name': name.trim(),
+          'email': email.trim(),
+          'role': 'faculty',
+        });
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Faculty signed up successfully')),
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const FacultyDashboard()),
+        (route) => false,
       );
-      Navigator.pushReplacementNamed(context, '/login-role');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result)),
+      );
     }
   }
 
@@ -70,15 +102,17 @@ class _SignupFacultyPageState extends State<SignupFacultyPage> {
                       validator: (val) => val!.length < 6 ? 'Password too short' : null,
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal.shade700,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                      ),
-                      child: const Text('Sign Up'),
-                    ),
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: _submitForm,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal.shade700,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                            ),
+                            child: const Text('Sign Up'),
+                          ),
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed: () {

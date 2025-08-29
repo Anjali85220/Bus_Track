@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "738586606528",
+    "firebase_url": "https://bus-live-tracker-1fd6b-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "bus-live-tracker-1fd6b",
+    "storage_bucket": "bus-live-tracker-1fd6b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738586606528:android:46ba78c5c7cfe176cee625",
+        "android_client_info": {
+          "package_name": "com.example.college_bus_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLnohOIvDshz6IfUs55YN-_mKSKCl3nrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738586606528:android:5f7ee779675a758bcee625",
+        "android_client_info": {
+          "package_name": "com.hitam.trackmybus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLnohOIvDshz6IfUs55YN-_mKSKCl3nrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

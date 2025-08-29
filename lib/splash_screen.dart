@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'home_page.dart'; // Ensure you have HomePage properly defined
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_auth_service.dart';
+import 'home_page.dart';
+import 'dashboard_student.dart';
+import 'dashboard_faculty.dart';
+import 'dashboard_driver.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,6 +16,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   late VideoPlayerController _controller;
+  final FirebaseAuthService _authService = FirebaseAuthService();
 
   @override
   void initState() {
@@ -22,12 +28,44 @@ class _SplashScreenState extends State<SplashScreen> {
         _controller.play();
       });
 
-    // Navigate to HomePage after 5 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+    // After 3 sec → check login status
+    Future.delayed(const Duration(seconds: 3), () async {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // ✅ Already logged in → fetch role
+        final userData = await _authService.getUserDetails(user.uid);
+        final role = userData?['role'];
+
+        if (role == 'student') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const StudentDashboard()),
+          );
+        } else if (role == 'faculty') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const FacultyDashboard()),
+          );
+        } else if (role == 'driver') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const DriverDashboard()),
+          );
+        } else {
+          // Role not found → go to login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
+      } else {
+        // ❌ Not logged in → go to login/signup
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
     });
   }
 
@@ -65,8 +103,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     height: 80,
                   ),
                 ),
-
-                
               ],
             )
           : const Center(child: CircularProgressIndicator()),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginFacultyPage extends StatefulWidget {
   const LoginFacultyPage({super.key});
@@ -11,11 +12,34 @@ class _LoginFacultyPageState extends State<LoginFacultyPage> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  bool isLoading = false;
 
-  void _login() {
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.pushNamed(context, '/dashboard-faculty');
+      setState(() => isLoading = true);
+
+      try {
+        final credential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email, password: password);
+
+        // Check if email ends with @hitam.org
+        if (email.endsWith('@hitam.org')) {
+          Navigator.pushNamed(context, '/dashboard-faculty');
+        } else {
+          await FirebaseAuth.instance.signOut();
+          _showError('Please use your official @hitam.org email.');
+        }
+      } on FirebaseAuthException catch (e) {
+        _showError(e.message ?? 'Login failed.');
+      } finally {
+        setState(() => isLoading = false);
+      }
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -49,7 +73,7 @@ class _LoginFacultyPageState extends State<LoginFacultyPage> {
                       }
                       return null;
                     },
-                    onChanged: (val) => email = val,
+                    onChanged: (val) => email = val.trim(),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -59,17 +83,19 @@ class _LoginFacultyPageState extends State<LoginFacultyPage> {
                       prefixIcon: Icon(Icons.lock),
                     ),
                     validator: (value) => value!.isEmpty ? 'Enter password' : null,
-                    onChanged: (val) => password = val,
+                    onChanged: (val) => password = val.trim(),
                   ),
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                    ),
-                    child: const Text('Login'),
-                  )
+                  isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: _login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                          ),
+                          child: const Text('Login'),
+                        ),
                 ],
               ),
             ),
